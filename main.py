@@ -1,5 +1,22 @@
 import asyncio
 import math
+import threading
+from flask import Flask
+
+# Мини-сервер для "анти-сна"
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "I'm alive!"
+
+def run_flask():
+    app.run(host='0.0.0.0', port=8080)
+
+# Запуск сервера в отдельном потоке
+def keep_alive():
+    t = threading.Thread(target=run_flask)
+    t.start()
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
@@ -120,7 +137,9 @@ async def yookassa_waiting(callback: types.CallbackQuery):
     await callback.answer()
 
 async def main():
+    keep_alive()
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
+
     asyncio.run(main())
