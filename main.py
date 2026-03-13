@@ -4,6 +4,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 import math
 import threading
+import os
 from flask import Flask
 
 # Мини-сервер для "анти-сна"
@@ -14,7 +15,9 @@ def home():
     return "I'm alive!"
 
 def run_flask():
-    app.run(host='0.0.0.0', port=8080)
+    # Render передает порт в переменной окружения PORT
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
 
 # Запуск сервера в отдельном потоке
 def keep_alive():
@@ -28,7 +31,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from aiogram.types import InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
 
 TOKEN = "8639396565:AAH909EJPvicReJSUgJjmyhK1XtlafsvKg8"
-
+ADMIN_ID = 1285110076
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
@@ -146,7 +149,7 @@ async def main():
     # 2. Пишем в лог и отправляем сообщение (замени ID на свой цифровой, если юзернейм не сработает)
     print("--- БОТ ЗАПУЩЕН И ГОТОВ К РАБОТЕ ---")
     try:
-        await bot.send_message("@i666zxc666", "🚀 Я переродился и снова в сети!")
+        await bot.send_message(ADMIN_ID, "🚀 Я переродился и снова в сети!")
     except Exception as e:
         print(f"Не удалось отправить сообщение админу: {e}")
 
