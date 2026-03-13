@@ -110,17 +110,27 @@ async def process_payment(callback: types.CallbackQuery, state: FSMContext):
 
 @dp.message(OrderStates.waiting_for_amount)
 async def custom_amount(message: types.Message, state: FSMContext):
-    # Если юзер нажал "Вернуться в меню" вместо ввода числа, сработает верхний хендлер
+    # Если юзер передумал и нажал кнопку возврата
     if message.text == "⬅️ Вернуться в меню":
+        await state.clear()
         return 
 
+    # Проверяем, что введено именно число
     if message.text.isdigit():
         stars = int(message.text)
-        price = math.ceil(stars * 1.4)
-        await show_checkout(message, stars, price)
-        await state.clear()
+        
+        # --- ВОТ ТУТ ДОБАВЛЯЕМ ПРОВЕРКУ ДИАПАЗОНА ---
+        if stars < 50:
+            await message.answer("❌ Минимальное количество для заказа — 50 ⭐")
+        elif stars > 5000:
+            await message.answer("❌ Максимальное количество для разового заказа — 5000 ⭐")
+        else:
+            # Если всё ок, считаем цену и показываем чек
+            price = math.ceil(stars * 1.4)
+            await show_checkout(message, stars, price)
+            await state.clear() # Сбрасываем состояние только при успешном вводе
     else:
-        await message.answer("Введите число цифрами или нажмите кнопку возврата ниже.")
+        await message.answer("⚠️ Введите количество звёзд цифрами (например, 150) или нажмите кнопку возврата.")
 
 async def show_checkout(message_obj, stars, price):
     text = f"💎 **Ваш заказ:**\n\n— {stars} Stars\n— К оплате: {price}₽\n\nНажми кнопку ниже, чтобы оплатить заказ."
