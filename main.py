@@ -1,4 +1,7 @@
 import asyncio
+import logging
+# Настройка логирования: уровень INFO будет выводить основные события
+logging.basicConfig(level=logging.INFO)
 import math
 import threading
 from flask import Flask
@@ -137,9 +140,19 @@ async def yookassa_waiting(callback: types.CallbackQuery):
     await callback.answer()
 
 async def main():
+    # 1. Запускаем сервер анти-сна
     keep_alive()
+    
+    # 2. Пишем в лог и отправляем сообщение (замени ID на свой цифровой, если юзернейм не сработает)
+    print("--- БОТ ЗАПУЩЕН И ГОТОВ К РАБОТЕ ---")
+    try:
+        await bot.send_message("@i666zxc666", "🚀 Я переродился и снова в сети!")
+    except Exception as e:
+        print(f"Не удалось отправить сообщение админу: {e}")
+
+    # 3. Запуск самого бота
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-
     asyncio.run(main())
+
